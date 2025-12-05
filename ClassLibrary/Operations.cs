@@ -17,7 +17,13 @@
 
     public class Division :  IOperation
     {
-        public double DoOperation(double a, double b) =>  a / b;
+        public double DoOperation(double a, double b)
+        {
+            if (b == 0)
+                throw new DivideByZeroException("Cannot divide by zero!");
+
+            return a / b;
+        }
     }
 
     public class Subtraction :  IOperation
