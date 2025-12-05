@@ -1,0 +1,31 @@
+# Build artifacts
+bin/
+obj/
+
+# Rider / IntelliJ / JetBrains
+.idea/
+*.sln.iml
+*.user
+*.userprefs
+
+# VS Code
+.vscode/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+
+# Logs
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Global JSON backup
+global.json.backup
