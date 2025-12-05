@@ -104,7 +104,7 @@ namespace Calculator
                 if (!string.IsNullOrWhiteSpace(input))
                     input = input.Replace(',', '.');
 
-                if (double.TryParse(input, NumberStyles.Any, CultureInfo.InvariantCulture, out double value))
+                if (double.TryParse(input, out double value))
                     return value;
 
                 Console.WriteLine("Invalid number! Please enter a valid numeric value.\n");
