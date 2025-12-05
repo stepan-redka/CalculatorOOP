@@ -1,3 +1,4 @@
+using System.Globalization;
 namespace ClassLibrary
 {
     public class MyCalculator
@@ -22,9 +23,11 @@ namespace ClassLibrary
         }
     }
 
-    public class ExpressionEvaluator
-    {
-        private readonly MyCalculator _calculator;
+
+
+public class ExpressionEvaluator
+{
+    private readonly MyCalculator _calculator;
 
     public ExpressionEvaluator(MyCalculator calculator)
     {
@@ -59,7 +62,10 @@ namespace ClassLibrary
                     i++;
                 }
 
-                values.Push(double.Parse(number));
+                if (!double.TryParse(number, NumberStyles.Any, CultureInfo.InvariantCulture, out double value))
+                    throw new Exception($"Invalid number: {number}");
+
+                values.Push(value);
                 continue;
             }
 
@@ -74,8 +80,13 @@ namespace ClassLibrary
             // closing parenthesis
             if (c == ')')
             {
+                if (!ops.Contains("("))
+                    throw new Exception("Mismatched parentheses.");
+
                 while (ops.Peek() != "(")
-                    ApplyTopOperation(values, ops.Pop());
+                {
+                    ApplyOperationSafely(values, ops.Pop());
+                }
 
                 ops.Pop(); // remove '('
                 i++;
@@ -87,10 +98,10 @@ namespace ClassLibrary
             {
                 string op = c.ToString();
 
-                // apply existing ops with higher or equal priority
-                while (ops.Count > 0 && Precedence(ops.Peek()) >= Precedence(op))
+                // apply operators of higher or equal precedence (skip "(")
+                while (ops.Count > 0 && ops.Peek() != "(" && Precedence(ops.Peek()) >= Precedence(op))
                 {
-                    ApplyTopOperation(values, ops.Pop());
+                    ApplyOperationSafely(values, ops.Pop());
                 }
 
                 ops.Push(op);
@@ -103,23 +114,34 @@ namespace ClassLibrary
 
         // apply remaining ops
         while (ops.Count > 0)
-            ApplyTopOperation(values, ops.Pop());
+        {
+            if (ops.Peek() == "(")
+                throw new Exception("Mismatched parentheses.");
+
+            ApplyOperationSafely(values, ops.Pop());
+        }
+
+        if (values.Count != 1)
+            throw new Exception("Invalid expression.");
 
         return values.Pop();
     }
 
-
-    private void ApplyTopOperation(Stack<double> values, string op)
+    private void ApplyOperationSafely(Stack<double> values, string op)
     {
+        if (values.Count < 2)
+            throw new Exception("Invalid expression: not enough operands.");
+
         double b = values.Pop();
         double a = values.Pop();
+
         values.Push(_calculator.Calculate(a, op, b));
     }
 
     private bool IsOperator(char c) => "+-*/".Contains(c);
 
-    private int Precedence(string op) =>
-        (op == "+" || op == "-") ? 1 : 2;
-    }
+    private int Precedence(string op) => (op == "+" || op == "-") ? 1 : 2;
+}
+
 }
 
