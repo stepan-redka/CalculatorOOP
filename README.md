@@ -22,6 +22,6 @@ This project was developed as an OOP practice task with the goals of:
 
 All exceptions are caught in the UI layer to prevent program crashes.
 
-The UI does not contain calculation logic, parsing logic, or validation rules.
+The UI does not contain calculation logic, parsing logic or validation rules.
 
 I successfully implemented each requirement, trying to write clean and well-structured code.
